@@ -1,4 +1,4 @@
-# Deploy and Run Custom App Image for Tibco ActiveSpaces Application on Tibco Platfrom.
+# Deploy and Run Custom App Image for Tibco ActiveSpaces Application on Tibco Platform.
 
 
 ## Description
@@ -15,7 +15,7 @@ You can create Docker images that include all required application dependencies,
  In the attached Docker file, we are installing the runtime dependencies for Tibco ActiveSpaces app. 
 
 The main purpose of this sample is:
-* To deploy your own custom application image with all dependencies preinstalled directly on TIBCO Platfrom.
+* To deploy your own custom application image with all dependencies preinstalled directly on TIBCO Platform.
 
 
 ## Prerequisites
@@ -50,16 +50,12 @@ The main purpose of this sample is:
     ![Run Tibco Activespaces app](../../../images/Custom_App_Image/activespace_images/3.png)
 
 
-##Push the Application Image to AWS Elastic Container Registry (ECR)
+## Push the Application Image to a docker registry of your choice.
 
 Here we are pushing the Docker image to AWS ECR.
 1. Log in to AWS ECR
    Make sure you have run:
     aws configure
-
-   ![Run aws configure](../../../images/Custom_App_Image/activespace_images/4.png)
-
-
 
  2. Then log in:
 
@@ -70,7 +66,7 @@ Here we are pushing the Docker image to AWS ECR.
 
      aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 970813828366.dkr.ecr.us-west-2.amazonaws.com
 
-  ![Login to the aws](../../../images/Custom_App_Image/activespace_images/5.png)
+  ![Login to the aws](../../../images/Custom_App_Image/activespace_images/4.png)
 
 3. Tag and Push your Docker Image
 
@@ -82,7 +78,7 @@ Here we are pushing the Docker image to AWS ECR.
 
    docker tag activespaceapp:latest 970813828366.dkr.ecr.us-west-2.amazonaws.com/vinaytest:activespaceapp
 
-   ![Tag docker image](../../../images/Custom_App_Image/activespace_images/6.png)
+   ![Tag docker image](../../../images/Custom_App_Image/activespace_images/5.png)
 
   * Push the image to ECR:
 
@@ -92,7 +88,7 @@ Here we are pushing the Docker image to AWS ECR.
 
    docker push 970813828366.dkr.ecr.us-west-2.amazonaws.com/vinaytest:activespaceapp
    
-   ![Push the image to ECR](../../../images/Custom_App_Image/activespace_images/7.png)
+   ![Push the image to ECR](../../../images/Custom_App_Image/activespace_images/6.png)
 
 3. Fully Qualified Image Name Example
    970813828366.dkr.ecr.us-west-2.amazonaws.com/vinaytest:activespaceapp
@@ -118,38 +114,38 @@ Here we are pushing the Docker image to AWS ECR.
 
       > **eg:** flogobuild create-context -n "<context-name>" -v "<path-to-.vsix file>" --set-default
 
-    ![Create context](../../../images/Custom_App_Image/activespace_images/8.png)  
+    ![Create context](../../../images/Custom_App_Image/activespace_images/7.png)  
 
 2. After creating the context, create the TIBCO Platform deployment zip file for your Flogo application using Flogo® - App Build Command Line Interface (CLI).
 
       > **eg:** flogobuild build-tp-deployment -f "<path-to-flogo-app-file>" -i "<fullyqualified-custom-container-image-name>" -c "<context-name>" -t "<tag1, tag2>" -o "<path-for-zip-file>" -z "<zip-file-name>"
 
-    ![Create build.zipt](../../../images/Custom_App_Image/activespace_images/9.png)
+    ![Create build.zip](../../../images/Custom_App_Image/activespace_images/8.png)
 
 ## Import, Deploy build.zip and Run the Application on Tibco Control Plane
 
 1. Import the generated build.zip file in your Data plane on Tibco Control Plane using Import App Build option on Flogo capability page.
 
-      ![Import build.zip on TP](../../../images/Custom_App_Image/activespace_images/10.png)
+      ![Import build.zip on TP](../../../images/Custom_App_Image/activespace_images/9.png)
 
-      ![build.zip get imported on TP successfully](../../../images/Custom_App_Image/activespace_images/11.png)
+      ![build.zip get imported on TP successfully](../../../images/Custom_App_Image/activespace_images/10.png)
       
-      Here don't need to provision Flogo build, Tibco AcitveSpaces connector.
+      Here don't need to provision Flogo build, Tibco ActiveSpaces connector.
       
 2. Specify imagePullSecret for custom app image build deployed using Helm manage way.
 
-      ![Specify imagePullSecret](../../../images/Custom_App_Image/activespace_images/12.png)
+      ![Specify imagePullSecret](../../../images/Custom_App_Image/activespace_images/11.png)
 
     Here we are using private image hence need to specify imagePullSecret value in deployment YAML.
 
 3. Start application, and check the logs.
 
-      ![Start application](../../../images/Custom_App_Image/activespace_images/13.png)
+      ![Start application](../../../images/Custom_App_Image/activespace_images/12.png)
 
 
 ## Understanding Dockerfile and start.sh file configuration
 
-### Understanding Dokcerfile
+### Understanding Dockerfile
 
 In the Dockerfile,
 1. Base Image:
@@ -159,7 +155,7 @@ In the Dockerfile,
 
     ```
 
-    Uses unubtu:22.04 as the base image. We used ubuntu:22.04 because it's a stable LTS, glibc-based image fully compatible with ActiveSpaces/FTL libraries
+    Uses ubuntu:22.04 as the base image. We used ubuntu:22.04 because it's a stable LTS, glibc-based image fully compatible with ActiveSpaces/FTL libraries
 
 2.  Install dependencies:
     The following Dockerfile section installs all the system-level dependencies required for running the ActiveSpaces and FTL libraries, extracting installation packages, and supporting runtime operations:
@@ -263,7 +259,7 @@ In the Dockerfile,
   
     Specifies the script should run using the Bash shell, located via the environment (env). Ensures compatibility across different systems.
 
-2. Print a banner to the console showing the start message, the HOSTNAME environment variable value, and where logs will go. (HOSTNAME is typically set by the environment; if not set it         will print empty.)
+2. Print a banner to the console showing the start message, the HOSTNAME environment variable value, and where logs will go. (HOSTNAME is typically set by the environment; if not set it will print empty.)
       
      echo "=========================================================="
      echo "  Starting ActiveSpace Connector Flogo App"
@@ -296,7 +292,7 @@ In the Dockerfile,
 
    export LD_LIBRARY_PATH="/opt/tibco/as/4.10/lib:/opt/tibco/ActiveSpaceConnector/lib:/opt/tibco/ftl/7.0/lib:/usr/lib64:/lib64:$LD_LIBRARY_PATH"
 
-    Set LD_LIBRARY_PATH so the dynamic linker can find the required native/shared libraries (ActiveSpaces, FTL, connector libs). It prepends the required folders and appends the existing     $LD_LIBRARY_PATH so previously set locations are preserved.
+    Set LD_LIBRARY_PATH so the dynamic linker can find the required native/shared libraries (ActiveSpaces, FTL, connector libs). It prepends the required folders and appends the existing    $LD_LIBRARY_PATH so previously set locations are preserved.
 
 5. echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
    echo "----------------------------------------------------------"
@@ -333,18 +329,23 @@ fi
 Custom App Image run for Tibco ActiveSpaces
 
 
-![App logs on Tibco Platfrom UI](../../../images/Custom_App_Image/activespace_images/13.png)
+![App logs on Tibco Platform UI](../../../images/Custom_App_Image/activespace_images/12.png)
 
 
 ## Troubleshooting
 
 * AWS ECR–specific note:
+
 * If you see ImagePullBackOff with ECR:
-   Make sure:
-* Your imagePullSecret name is correct
-* Secret exists in the same namespace
-* Secret points to the correct AWS registry URL
-* If you see error like: `Failed to import build with error: failed to retrieve buildtypes catalog json: stat /data/d24a8ji3ndns73da7pf0/tibco/flogo/base/catalog.json: no such file or directory` then make sure you have provisioned Flogo build.
+  Make sure:
+  * Your imagePullSecret name is correct  
+  * Secret exists in the same namespace  
+  * Secret points to the correct AWS registry URL  
+
+* If you see an error like:  
+  `Failed to import build with error: failed to retrieve buildtypes catalog json: stat /data/d24a8ji3ndns73da7pf0/tibco/flogo/base/catalog.json: no such file or directory`  
+  then make sure you have provisioned Flogo build.
+
 
 
 ## Help
