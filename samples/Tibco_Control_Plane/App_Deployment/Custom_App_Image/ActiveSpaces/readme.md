@@ -292,7 +292,7 @@ In the Dockerfile,
 
    export LD_LIBRARY_PATH="/opt/tibco/as/4.10/lib:/opt/tibco/ActiveSpaceConnector/lib:/opt/tibco/ftl/7.0/lib:/usr/lib64:/lib64:$LD_LIBRARY_PATH"
 
-    Set LD_LIBRARY_PATH so the dynamic linker can find the required native/shared libraries (ActiveSpaces, FTL, connector libs). It prepends the required folders and appends the existing    $LD_LIBRARY_PATH so previously set locations are preserved.
+    Set LD_LIBRARY_PATH so the dynamic linker can find the required native/shared libraries (ActiveSpaces, FTL, connector libs). It prepends the required folders and appends the existing $LD_LIBRARY_PATH so previously set locations are preserved.
 
 5. echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
    echo "----------------------------------------------------------"
